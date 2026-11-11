@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": ["Read", "Edit", "Bash(git status)", "Bash(git diff:*)", "Bash(npm test)", "Bash(npm run lint)"],
+    "ask":   ["Bash(git push:*)", "Bash(git commit:*)", "Bash(npm install:*)", "Bash(docker:*)"],
+    "deny":  [
+      "Read(./.env*)", "Read(./secrets/**)", "Read(~/.ssh/**)", "Read(~/.aws/**)",
+      "Bash(curl:*)", "Bash(wget:*)", "Bash(rm -rf:*)",
+      "WebFetch"
+    ],
+    "defaultMode": "plan",
+    "disableBypassPermissionsMode": "disable"
+  },
+  "sandbox": {
+    "enabled": true,
+    "failIfUnavailable": true,
+    "allowUnsandboxedCommands": false
+  }
+}
