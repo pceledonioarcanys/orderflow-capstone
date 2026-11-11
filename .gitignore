@@ -4,3 +4,13 @@ coverage/
 *.log
 .DS_Store
 dist/
+
+# Local environment variants (keeps .env.example untracked too)
+.env.*
+
+# Claude Code per-user local settings
+.claude/settings.local.json
+
+# Session-export artifacts written to the repo root
+/session-export-*.md
+/session-export-*.zip
