@@ -85,4 +85,17 @@ This result verifies **only** commit `b52746f93ff946bac1e4d9c3c3f9b82a86c1ac09`.
 - [ ] **Green CI on the final PR head.** This REVIEW.md update and the human-review record (below) each add a commit and move the PR head, so the final head needs its own successful run with a matching head SHA.
 
 ## Human review
-_Pending._ The user's personal review of the entire final PR diff has not happened yet. Per SPEC §9 step 8, the user records the full reviewed SHA, the diff range, the date and their own confirmation here, in a commit that changes only this section.
+
+| | |
+|---|---|
+| Reviewed revision | `87d5cf13374c8109a26f9f77f202894853980243` |
+| Base | `1454c093c865de24a17043260541f6c206eea593` (`main`) |
+| Diff range | `main` (`1454c093…`) → `87d5cf13…`, 12 files |
+| Date | 2026-11-12 (Asia/Manila) |
+| Review method | The complete diff was displayed and read in sections: production code and README; parser and model tests; route tests; SPEC.md in four parts; both reviewer agent definitions; REVIEW.md and PROCESS.md. |
+
+The user's confirmation, quoted:
+
+> I confirm that I personally read the entire PR diff from main at 1454c093c865de24a17043260541f6c206eea593 through 87d5cf13374c8109a26f9f77f202894853980243, including production code, README, all tests, SPEC.md, both agent definitions, REVIEW.md, and PROCESS.md. I understand the documented behavior change, verification limits, retained test-quality limitations, and review-cycle timeline.
+
+This record covers only revision `87d5cf13374c8109a26f9f77f202894853980243`. The commit that adds this section changes nothing else. Any other later change needs a new review (SPEC §9 step 8).
