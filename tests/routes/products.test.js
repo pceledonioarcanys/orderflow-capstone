@@ -1,5 +1,5 @@
 /**
- * Direct handler tests for GET /api/products (SPEC.md §7, matrix rows H0–H12).
+ * Direct handler tests for GET /api/products (SPEC.md §7, matrix rows H0–H13).
  *
  * No listening socket: local port binding is blocked in the sandbox, so the
  * real handler is taken from the exported router and called with mocked
@@ -213,5 +213,55 @@ describe("GET /api/products handler", () => {
     expect(next.mock.calls[0][0]).toBe(err);
     expect(res.status).not.toHaveBeenCalled();
     expect(res.json).not.toHaveBeenCalled();
+  });
+
+  // H13 was added after implementation (SPEC.md §8). It is regression coverage
+  // for §2.1 (unknown parameters are ignored) and §4 (public callers cannot
+  // override activeOnly). activeOnly is "" because "false" is a truthy string
+  // and would not catch a route that spreads req.query into the model call.
+  it("H13: query values cannot override activeOnly or add model options", async () => {
+    db.query.mockResolvedValueOnce({ rows: [] });
+
+    const { res, next } = await invoke({
+      category: "books",
+      limit: "10",
+      offset: "20",
+      activeOnly: "",
+      foo: "x",
+    });
+
+    expect(findAllSpy).toHaveBeenCalledTimes(1);
+    expect(findAllSpy.mock.calls[0]).toStrictEqual([
+      { category: "books", limit: 10, offset: 20 },
+    ]);
+    const { sql, params } = onlyQuery();
+    expect(sql).toBe(CATEGORY_SQL);
+    expect(params).toEqual(["books", 10, 20]);
+    expectOk(res, next, { products: [], count: 0 });
+  });
+
+  // Additional H13 cases for the same §4 requirement. They catch a route that
+  // drops the active filter only for a specific trigger value.
+  describe("H13: activeOnly trigger values cannot override public filtering", () => {
+    it.each(["false", "0"])("activeOnly %j", async (activeOnly) => {
+      db.query.mockResolvedValueOnce({ rows: [] });
+
+      const { res, next } = await invoke({
+        category: "books",
+        limit: "10",
+        offset: "20",
+        activeOnly,
+        foo: "x",
+      });
+
+      expect(findAllSpy).toHaveBeenCalledTimes(1);
+      expect(findAllSpy.mock.calls[0]).toStrictEqual([
+        { category: "books", limit: 10, offset: 20 },
+      ]);
+      const { sql, params } = onlyQuery();
+      expect(sql).toBe(CATEGORY_SQL);
+      expect(params).toEqual(["books", 10, 20]);
+      expectOk(res, next, { products: [], count: 0 });
+    });
   });
 });
