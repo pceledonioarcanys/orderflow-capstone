@@ -62,7 +62,13 @@
 | `test-auditor`, final, stricter security criterion | **PASS, no findings** | Reported by the agent |
 | `git diff 19f49c4 -- tests/` | Only additions, plus a one-line header comment change (`H0–H12` → `H0–H13`) | Claude, and both reviewers |
 
-The user has not personally run these checks in this document's evidence. CI results for this branch do not exist yet (see Pending).
+The user has not personally run the checks above. The CI result below comes from external-terminal output the user supplied.
+
+| CI check | Result | Source |
+|---|---|---|
+| GitHub Actions `Tests`, `pull_request` event, PR head `b52746f93ff946bac1e4d9c3c3f9b82a86c1ac09`: [run 43144918492](https://github.com/pceledonioarcanys/orderflow-capstone/actions/runs/43144918492) | `completed` / `success`. The run's head SHA matches the PR head exactly. | The user's external-terminal output |
+
+This result verifies **only** commit `b52746f93ff946bac1e4d9c3c3f9b82a86c1ac09`. It does not cover this REVIEW.md update or any later commit.
 
 ## Known limitations (non-blocking)
 - **Two H0 assertions can never fail:** `expect(listLayer).toBeDefined()` at `tests/routes/products.test.js:104` and `expect(listLayer.route.stack[1].handle).toBe(handler)` at `:107`. They are kept, because SPEC §9 forbids removing assertions after the failing-test commit. The real H0 checks are at lines 103, 105, 106 and 108.
@@ -72,10 +78,11 @@ The user has not personally run these checks in this document's evidence. CI res
   - The route tests call the handler directly. `qs` parsing, the Express middleware chain, the real `optionalAuth` and the global error handler are not exercised.
   - No real PostgreSQL, HTTP server or authentication check was run.
 
-## Pending
-- [ ] Push `main` (setup commit `1454c09…`) before opening the PR, then push `feature/products-pagination`.
-- [ ] PR link: _not yet created_.
-- [ ] GitHub Actions run on the PR branch: _not yet run_.
+## Shipping status
+- [x] `main` (setup commit `1454c093c865de24a17043260541f6c206eea593`) pushed before the feature branch. The local tracking ref `origin/main` matches.
+- [x] PR: https://github.com/pceledonioarcanys/orderflow-capstone/pull/1 (base `main`, head `feature/products-pagination`). Reported from the user's external terminal.
+- [x] Green CI for PR head `b52746f93ff946bac1e4d9c3c3f9b82a86c1ac09`: [run 43144918492](https://github.com/pceledonioarcanys/orderflow-capstone/actions/runs/43144918492), `pull_request`, completed / success.
+- [ ] **Green CI on the final PR head.** This REVIEW.md update and the human-review record (below) each add a commit and move the PR head, so the final head needs its own successful run with a matching head SHA.
 
 ## Human review
 _Pending._ The user's personal review of the entire final PR diff has not happened yet. Per SPEC §9 step 8, the user records the full reviewed SHA, the diff range, the date and their own confirmation here, in a commit that changes only this section.
