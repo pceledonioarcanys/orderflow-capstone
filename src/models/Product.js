@@ -1,6 +1,12 @@
 const db = require("../config/database");
+const { DEFAULT_LIMIT } = require("../utils/pagination");
 
-async function findAll({ category, activeOnly = true } = {}) {
+async function findAll({
+  category,
+  activeOnly = true,
+  limit = DEFAULT_LIMIT,
+  offset = 0,
+} = {}) {
   let sql = "SELECT * FROM products";
   const params = [];
   const conditions = [];
@@ -16,7 +22,12 @@ async function findAll({ category, activeOnly = true } = {}) {
   if (conditions.length > 0) {
     sql += " WHERE " + conditions.join(" AND ");
   }
-  sql += " ORDER BY name";
+  sql += " ORDER BY name, id";
+
+  params.push(limit);
+  sql += ` LIMIT $${params.length}`;
+  params.push(offset);
+  sql += ` OFFSET $${params.length}`;
 
   const { rows } = await db.query(sql, params);
   return rows;
