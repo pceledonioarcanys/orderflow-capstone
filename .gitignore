@@ -10,6 +10,7 @@ dist/
 
 # Claude Code per-user local settings
 .claude/settings.local.json
+.claude/gh-verify.session.json
 
 # Session-export artifacts written to the repo root
 /session-export-*.md
