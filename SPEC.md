@@ -192,10 +192,14 @@ sandbox. The route tests call the real handler directly, with mocked
   The handler is the **last** layer of that route. No handler logic is copied into the
   tests. This relies on Express 4 internals (`router.stack`, `layer.route`), which
   `package-lock.json` pins to 4.22.1.
-- **What runs for real:** the parser and `Product.findAll`. Only `db.query` is mocked
+- **What runs for real, and what is mocked:** the pagination parser and `Product.findAll`
+  run for real. `db.query` is mocked
   (`jest.mock("../../src/config/database", () => ({ query: jest.fn() }))`, following
-  `tests/services/userService.test.js`). `jest.spyOn(Product, "findAll")` runs the real
-  model and lets tests assert it was **not** called. `jest.clearAllMocks()` runs in
+  `tests/services/userService.test.js`). In the route tests, the auth module is also
+  mocked, solely for the `optionalAuth` registration sentinel described below. That mock
+  does not verify real authentication or the Express middleware pipeline.
+  `jest.spyOn(Product, "findAll")` runs the real model and lets tests assert it was
+  **not** called. `jest.clearAllMocks()` runs in
   `beforeEach` and spies are restored in `afterEach`.
 - **`res` mock:** `status` and `json` are `jest.fn()` that return `res`. The tests
   `await` the handler.
