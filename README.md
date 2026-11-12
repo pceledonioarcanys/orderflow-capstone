@@ -26,7 +26,7 @@ npm run dev
 | POST | `/api/auth/register` | Create a new account |
 | POST | `/api/auth/login` | Get a JWT token |
 | GET | `/api/users/active` | List active users |
-| GET | `/api/products` | List all products |
+| GET | `/api/products` | List active products (paginated: `limit` 1–100, default 50; `offset`) |
 | GET | `/api/orders` | List orders (auth required) |
 | GET | `/api/orders/:id` | Get order details |
 | GET | `/api/orders/history` | Full order history |
@@ -34,6 +34,8 @@ npm run dev
 | POST | `/api/orders` | Create an order |
 | POST | `/api/payments` | Process a payment |
 | POST | `/api/search` | Search across tables |
+
+**`GET /api/products` pagination:** a request with no parameters returns at most 50 products, not the whole catalogue, and `count` is the number returned on that page. To fetch everything, increase `offset` by `limit` until `count < limit`. Invalid `limit` or `offset` values return `400 { "error": "..." }`.
 
 ## Running Tests
 
