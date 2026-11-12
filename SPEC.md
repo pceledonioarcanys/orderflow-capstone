@@ -281,9 +281,30 @@ Tests write the error strings out in full and never import them from the code un
 | H10 | category `""` | full M1 SQL, `[50, 0]` | fails: params `[]` |
 | H11 | offset `"1000"`, rows `[]` | params `[50, 1000]`; `json({ products: [], count: 0 })`; no 400 | fails: params `[]` |
 | H12 | `{}`, `db.query` rejects with `new Error("connection refused")` | `next` called once with **that** error object; `res.status` and `res.json` not called | passes (regression guard) |
+| H13 | `{ category: "books", limit: "10", offset: "20", activeOnly: "", foo: "x" }`, rows `[]` | `Product.findAll` called exactly once with exactly `{ category: "books", limit: 10, offset: 20 }`; full M2 SQL (`SELECT * FROM products WHERE is_active = true AND category = $1 ORDER BY name, id LIMIT $2 OFFSET $3`), params `["books", 10, 20]`; `res.json({ products: [], count: 0 })`; `res.status` and `next` not called | not part of the red checkpoint (added after implementation; see below) |
 
 Predicted at the red checkpoint: every new test fails except M6, H0 and H12, which
 pass as regression guards. The baseline (7 suites, 44 tests) stays green.
+These predictions and the audited red counts (73 failed, 47 passed, 120 total) cover
+P1–P15, M1–M6 and H0–H12 only. They are historical and are not changed by H13.
+
+**H13 (added after implementation).** H13 adds **coverage, not behaviour**. It is a
+regression test for two existing requirements:
+- §2.1: unknown query parameters are ignored;
+- §4: the public listing always calls the model with `activeOnly = true`, so public
+  callers cannot override active-product filtering.
+
+A stricter final-phase `test-auditor` review found that no earlier test would catch a
+route that forwards query values to the model, for example
+`Product.findAll({ ...req.query, limit, offset })`. That route passes H0–H12, but
+`?activeOnly=` reaches the model as `""` and drops `is_active = true`. The empty string
+is used deliberately: `"false"` is a truthy string and would not catch that route.
+The exact-argument check on `Product.findAll` also catches any other unapproved option
+being forwarded.
+
+The committed implementation already meets both requirements, so H13 is expected to
+**pass immediately** against the current code. It is not a red test, and it is added in
+its own commit after the implementation commit (§9 step 5).
 
 ## 9. Workflow and commit order
 No squashing and no force-pushing at any point.
